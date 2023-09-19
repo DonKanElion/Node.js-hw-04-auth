@@ -1,7 +1,8 @@
 const express = require("express");
-const { schemas } = require("../../models/contact");
+const router = express.Router();
 
-const { HttpError } = require("../../helpers/index");
+const { schemas } = require("../../models/contact");
+const { HttpError } = require("../../helpers");
 const { isValidId, validateBody } = require("../../middleware/index");
 
 const {
@@ -11,8 +12,6 @@ const {
   removeContact,
   updateStatusContact,
 } = require("../../models/contacts");
-
-const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
