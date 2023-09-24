@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
+const ctrl = require("../../controllers/auth");
 const { schemas } = require("../../models/user");
-const { HttpError } = require("../../helpers");
 const { isValidId, validateBody } = require("../../middleware");
 
+//singup
+router.post("/register", validateBody(schemas.registerSchema), ctrl.register);
 
-const { register } = require("../../controllers/auth");
-
-// const {}
-
-router.post("/register", validateBody(schemas.registerSchema), register);
+//singin
+router.post("/login", validateBody(schemas.loginSchema), ctrl.login);
 
 module.exports = router;
