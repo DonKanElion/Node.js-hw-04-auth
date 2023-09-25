@@ -1,58 +1,24 @@
 const express = require("express");
 const router = express.Router();
 
+const ctrl = require("../../controllers/contacts");
 const { schemas } = require("../../models/contact");
 const { HttpError } = require("../../helpers");
-const { isValidId, validateBody } = require("../../middleware/index");
+const { isValidId, validateBody, authenticate } = require("../../middleware");
 
-const {
-  listContacts,
-  getContactById,
-  addContact,
-  removeContact,
-  updateStatusContact,
-} = require("../../models/contacts");
+router.get("/", ctrl.listContacts);
 
-router.get("/", async (req, res, next) => {
-  try {
-    const data = await listContacts();
-    res.json(data);
-  } catch (err) {
-    next(err);
-  }
-});
+router.get("/:contactId", isValidId, ctrl.getContactById);
 
-router.get("/:contactId", isValidId, async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const data = await getContactById(contactId.slice(1));
+router.post("/", validateBody(schemas.addSchema), ctrl.addContact);
 
-    if (!data) {
-      throw HttpError(404, "Not found");
-    }
-    res.status(200).json({ status: "success", data });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/", validateBody(schemas.addSchema), addContact);
-
-router.delete("/:contactId", isValidId, async (req, res, next) => {
-  try {
-    const data = await removeContact(req.params.contactId.slice(1));
-
-    res.status(200).json(data);
-  } catch (err) {
-    next(err);
-  }
-});
+router.delete("/:contactId", isValidId, ctrl.removeContact);
 
 router.patch(
   "/:contactId/favorite",
   isValidId,
   validateBody(schemas.updateFavoriteSchema),
-  updateStatusContact
+  ctrl.updateStatusContact
 );
 
 module.exports = router;
