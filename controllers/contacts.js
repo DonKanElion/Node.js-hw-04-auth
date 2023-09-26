@@ -2,8 +2,16 @@ const { Contact } = require("../models/contact");
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 const listContacts = async (req, res, next) => {
+  const { _id: owner } = req.body;
+  const { page = 1, limit = 10 } = req.query;
+  const skip = (page -1) * limit;
+
+
   try {
-    const result = await Contact.find();
+    const result = await Contact.find({ owner }).populate(
+      "owner",
+      "name email"
+    );
     res.json(result);
   } catch (err) {
     next(err);
@@ -25,6 +33,7 @@ const getContactById = async (req, res, next) => {
 
 const addContact = async (req, res, next) => {
   const { email } = req.body;
+  const { _id: owner } = req.user;
 
   const checkContactOnEmail = await Contact.find({ email });
 
@@ -32,7 +41,7 @@ const addContact = async (req, res, next) => {
     return res.status(200).json({ message: "This email have in database." });
   }
 
-  const result = await Contact.create(req.body);
+  const result = await Contact.create({ ...req.body, owner });
   res.status(201).json(result);
 };
 

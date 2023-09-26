@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 
-const { handleMongooseError } = require("../middleware/");
+const { handleMongooseError } = require("../middleware");
 
 const emailRegexp =
   /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -22,6 +22,10 @@ const userSchema = new Schema(
       type: String,
       minLength: 6,
       required: true,
+    },
+    token: {
+      type: String,
+      default: "",
     },
   },
   { versionKey: false, timestamps: true }

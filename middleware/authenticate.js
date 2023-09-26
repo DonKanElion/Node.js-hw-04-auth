@@ -1,33 +1,27 @@
-const { HttpError } = require("../helpers");
 const jwt = require("jsonwebtoken");
-// const { User } = require("../models/user");
 
+const { User } = require("../models/user");
+
+const { HttpError } = require("../helpers");
 
 const { SECRET_KEY } = process.env;
 
 const authenticate = async (req, res, next) => {
-  //   const { authenticate = "" } = req.headers;
-  const { authenticate} = req.headers;
-
-  console.log("Hello authenticate", authenticate);
-
-  const [bearer, token] = authenticate.split(" ");
-
+  const { authorization = "" } = req.headers;
+  const [bearer, token] = authorization.split(" ");
   if (bearer !== "Bearer") {
-    throw HttpError(401);
+    next(HttpError(401));
   }
-
   try {
     const { id } = jwt.verify(token, SECRET_KEY);
     const user = await User.findById(id);
-
-    if (!user) {
-      throw HttpError(401);
+    if (!user || !user.token || user.token !== token) {
+      next(HttpError(401));
     }
-    
+    req.user = user;
     next();
-  } catch (error) {
-    throw HttpError(401);
+  } catch {
+    next(HttpError(401));
   }
 };
 
