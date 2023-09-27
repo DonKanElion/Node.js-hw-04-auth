@@ -7,28 +7,49 @@ const emailRegexp =
   /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
 const userSchema = new Schema(
+
   {
-    name: {
+    password: {
       type: String,
-      required: true,
+      required: [true, 'Set password for user'],
     },
     email: {
       type: String,
-      match: emailRegexp,
+      required: [true, 'Email is required'],
       unique: true,
-      required: true,
     },
-    password: {
+    subscription: {
       type: String,
-      minLength: 6,
-      required: true,
+      enum: ["starter", "pro", "business"],
+      default: "starter"
     },
-    token: {
-      type: String,
-      default: "",
-    },
-  },
-  { versionKey: false, timestamps: true }
+    token: String
+  }
+
+
+  // Богдян Лямзин 
+  // {
+  //   name: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   email: {
+  //     type: String,
+  //     match: emailRegexp,
+  //     unique: true,
+  //     required: true,
+  //   },
+  //   password: {
+  //     type: String,
+  //     minLength: 6,
+  //     required: true,
+  //   },
+  //   token: {
+  //     type: String,
+  //     default: "",
+  //   },
+  // },
+  // { versionKey: false, timestamps: true }
 );
 
 userSchema.post("save", handleMongooseError);

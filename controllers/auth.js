@@ -20,8 +20,10 @@ const register = async (req, res) => {
   const newUser = await User.create({ ...req.body, password: hashPassword });
 
   res.status(201).json({
-    email: newUser.email,
-    name: newUser.name,
+    user: {
+      email: newUser.email,
+      name: newUser.name,
+    },
   });
 };
 
@@ -60,8 +62,16 @@ const login = async (req, res) => {
   //   console.log(error.message);
   // }
 
+  // res.json({
+  //   token,
+  // });
+
   res.json({
-    token,
+    token: token,
+    user: {
+      email,
+      subscription: "starter",
+    },
   });
 };
 
