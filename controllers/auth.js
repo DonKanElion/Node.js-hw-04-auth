@@ -31,8 +31,6 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
-  // console.log("ID: ", user);
-
   if (!user) {
     throw HttpError(401, "Email or password invalid");
   }
@@ -75,21 +73,20 @@ const login = async (req, res) => {
   });
 };
 
-const getCurrent = async (req, res) => {
-  const { email, name } = req.user;
-  res.json({ email, name });
-};
-
 const logout = async (req, res, next) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
+  res.status(204).send();
+};
 
-  res.json({ message: "Logout seccess" });
+const getCurrent = async (req, res) => {
+  const { email, subscription } = req.user;
+  res.status(200).json({ email, subscription });
 };
 
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
-  getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  getCurrent: ctrlWrapper(getCurrent),
 };

@@ -6,6 +6,8 @@ const { schemas } = require("../../models/contact");
 const { isValidId, validateBody, authenticate } = require("../../middleware");
 
 router.get("/", authenticate, ctrl.listContacts);
+// router.get("?page=1&limit=5", authenticate, ctrl.listContacts);
+
 
 router.get("/:contactId", authenticate, isValidId, ctrl.getContactById);
 
