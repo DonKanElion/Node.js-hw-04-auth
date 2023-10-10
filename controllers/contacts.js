@@ -2,7 +2,7 @@ const { Contact } = require("../models/contact");
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 const listContacts = async (req, res, next) => {
-  const { _id: owner } = req.body;
+  const { _id: owner } = req.user;
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
@@ -34,10 +34,11 @@ const addContact = async (req, res, next) => {
   const { email } = req.body;
   const { _id: owner } = req.user;
 
-  const checkContactOnEmail = await Contact.find({ email });
+  const isContactExist = await Contact.findOne({ email });
 
-  if (checkContactOnEmail.length === 1) {
-    return res.status(200).json({ message: "This email have in database." });
+  console.log(isContactExist);
+  if (isContactExist) {
+    return res.status(200).json({ message: "Email is already taken" });
   }
 
   const result = await Contact.create({ ...req.body, owner });
